@@ -1,7 +1,4 @@
-import matplotlib.pyplot as plt
-import numpy as np
 import json
-from collections import Counter
 
 def load_jsonl(path):
     data=[]
