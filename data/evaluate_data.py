@@ -47,10 +47,20 @@ def plot_data():
     sessions = load_jsonl_pd("sessions.jsonl")
     merge = pd.merge(sessions, products, on='product_id', how='left')
 
-    # categories = set()
-    # for value in merge["category_path"]:
-    #     categories.update(value.split(";"))
-    # print(categories)
+    categories = set()
+    for value in products["category_path"]:
+        categories.update(value.split(";"))
+
+    categories_count = {}
+    for category in categories:
+        categories_count[category] = 0
+    print(categories_count)
+
+    for value in merge['category_path']:
+        split = value.split(";")
+        for category in split:
+            categories_count[category] = categories_count.get(category) + 1
+    print(categories_count)
 
     plt.figure(figsize=(5, 5))
     products['price'].plot.box()
@@ -66,7 +76,7 @@ def plot_data():
     plt.show()
 
     plt.figure(figsize=(10, 5))
-    plt.hist(merge['category_path'], 200, facecolor='blue')
+    plt.bar(list(categories_count.keys()), list(categories_count.values()), facecolor='blue')
     plt.show()
 
 
