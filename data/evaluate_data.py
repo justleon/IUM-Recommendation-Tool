@@ -1,21 +1,9 @@
-import json
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from utils import load_jsonl_pd, load_jsonl
 from mi_coefficient import mi_coefficient
 from datetime import datetime
-
-
-def load_jsonl_pd(path):
-    return pd.read_json(path, lines=True)
-
-
-def load_jsonl(path):
-    data = []
-    with open(path, 'r', encoding='utf-8') as reader:
-        for line in reader:
-            data.append(json.loads(line))
-    return data
 
 
 def calc_percentage(part, whole, digits):

@@ -1,15 +1,7 @@
-import json
 import pandas as pd
 from sklearn.metrics import adjusted_mutual_info_score
 from itertools import combinations
-
-
-def load_jsonl(path):
-    data = []
-    with open(path, 'r', encoding='utf-8') as reader:
-        for line in reader:
-            data.append(json.loads(line))
-    return data
+from utils import load_jsonl
 
 
 def mi_coefficient():
