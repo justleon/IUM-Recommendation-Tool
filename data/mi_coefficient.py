@@ -12,7 +12,7 @@ def load_jsonl(path):
     return data
 
 
-if __name__ == '__main__':
+def mi_coefficient():
     u_cities = dict()
     u_names = dict()
     u_streets = dict()

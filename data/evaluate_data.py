@@ -1,7 +1,13 @@
 import json
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+from mi_coefficient import mi_coefficient
 from datetime import datetime
+
+
+def load_jsonl_pd(path):
+    return pd.read_json(path, lines=True)
 
 
 def load_jsonl(path):
@@ -22,6 +28,58 @@ def make_percentage(number, digits):
     percentage = 100 * number
     rounded_percentage = round(percentage, digits)
     return str(rounded_percentage) + '%'
+
+
+def prices_analysis():
+    products = load_jsonl_pd("products.jsonl")
+
+    ceny = []
+    negativeVal = 0
+    enormousVal = 0
+    for i in products['price']:
+        ceny.append(i)
+    ceny.sort()
+    numCeny = len(ceny)
+    print("\nPrices Analysis:\n")
+    print(products['price'].describe())
+    for i in ceny:
+        if float(i) <= 0:
+            negativeVal += 1
+        elif float(i) >= 10000:
+            enormousVal += 1
+
+    correctPrices = negativeVal + enormousVal
+    print('All products: ', numCeny)
+    print('Correct prices: ', numCeny - negativeVal - enormousVal)
+    print('% of correct prices: ', (numCeny - correctPrices) / numCeny * 100)
+
+
+def plot_data():
+    products = load_jsonl_pd("products.jsonl")
+    sessions = load_jsonl_pd("sessions.jsonl")
+    merge = pd.merge(sessions, products, on='product_id', how='left')
+
+    # categories = set()
+    # for value in merge["category_path"]:
+    #     categories.update(value.split(";"))
+    # print(categories)
+
+    plt.figure(figsize=(5, 5))
+    products['price'].plot.box()
+    plt.gca().set_yscale("log")
+    plt.show()
+
+    plt.figure(figsize=(5, 5))
+    plt.hist(sessions['event_type'], facecolor='blue')
+    plt.show()
+
+    plt.figure(figsize=(5, 5))
+    plt.hist(sessions['user_id'], 200, facecolor='blue')
+    plt.show()
+
+    plt.figure(figsize=(10, 5))
+    plt.hist(merge['category_path'], 200, facecolor='blue')
+    plt.show()
 
 
 if __name__ == '__main__':
@@ -69,3 +127,7 @@ if __name__ == '__main__':
     print('Daily sessions:', round(len(sessions_dict) / len(dates_set)))
     print('Daily views:', round(views / len(dates_set)))
     print('Daily purchases:', round(purchases / len(dates_set)))
+
+    prices_analysis()
+    plot_data()
+    # mi_coefficient()
