@@ -54,7 +54,6 @@ def plot_data():
     categories_count = {}
     for category in categories:
         categories_count[category] = 0
-    print(categories_count)
 
     for value in merge['category_path']:
         split = value.split(";")
@@ -65,18 +64,28 @@ def plot_data():
     plt.figure(figsize=(5, 5))
     products['price'].plot.box()
     plt.gca().set_yscale("log")
+    plt.savefig('../img/prices.png')
     plt.show()
 
     plt.figure(figsize=(5, 5))
     plt.hist(sessions['event_type'], facecolor='blue')
+    plt.title('Distribution of event types')
+    plt.savefig('../img/event_types.png')
     plt.show()
 
     plt.figure(figsize=(5, 5))
     plt.hist(sessions['user_id'], 200, facecolor='blue')
+    plt.title('Occurrences of user ids')
+    plt.xlabel('user id')
+    plt.savefig('../img/user_ids.png')
     plt.show()
 
     plt.figure(figsize=(10, 5))
+    plt.xticks(rotation='vertical')
     plt.bar(list(categories_count.keys()), list(categories_count.values()), facecolor='blue')
+    plt.title('Occurrences of product categories')
+    plt.tight_layout()
+    plt.savefig('../img/product_categories.png')
     plt.show()
 
 
