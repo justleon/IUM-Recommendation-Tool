@@ -2,8 +2,65 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from utils import load_jsonl_pd, load_jsonl
-from mi_coefficient import mi_coefficient
+from sklearn.metrics import adjusted_mutual_info_score
+from itertools import combinations
 from datetime import datetime
+
+
+def mi_coefficient():
+    u_cities = dict()
+    u_names = dict()
+    u_streets = dict()
+    users = load_jsonl("data/users.jsonl")
+    for user in users:
+        u_cities[user['user_id']] = user['city']
+        u_names[user['user_id']] = user['name']
+        u_streets[user['user_id']] = user['street']
+
+    p_prices = dict()
+    p_categories = dict()
+    p_names = dict()
+    products = load_jsonl("data/products.jsonl")
+    for product in products:
+        p_categories[product['product_id']] = product['category_path']
+        p_prices[product['product_id']] = product['price']
+        p_names[product['product_id']] = product['product_name']
+
+    s_user_ids = list()
+    s_product_ids = list()
+    s_event_types = list()
+    s_offered_discounts = list()
+    s_purchase_ids = list()
+    sessions = load_jsonl("data/sessions.jsonl")
+    for session in sessions:
+        s_user_ids.append(session['user_id'])
+        s_product_ids.append(session['product_id'])
+        s_event_types.append(session['event_type'])
+        s_offered_discounts.append(session['offered_discount'])
+        if session['purchase_id'] is None:
+            s_purchase_ids.append(0)
+        else:
+            s_purchase_ids.append(session['purchase_id'])
+
+    d = {'user_id': s_user_ids,
+         'product_id': s_product_ids,
+         'event_type': s_event_types,
+         'offered_discount': s_offered_discounts,
+         'purchase_id': s_purchase_ids}
+
+    dataframe = pd.DataFrame(d)
+
+    dataframe['user_city'] = dataframe['user_id'].map(u_cities)
+    dataframe['user_name'] = dataframe['user_id'].map(u_names)
+    dataframe['user_street'] = dataframe['user_id'].map(u_streets)
+    dataframe['product_name'] = dataframe['product_id'].map(p_names)
+    dataframe['product_price'] = dataframe['product_id'].map(p_prices)
+    dataframe['product_category'] = dataframe['product_id'].map(p_categories)
+
+    comb = combinations(dataframe.columns.values, 2)
+
+    for i in list(comb):
+        print(i[0], '&', i[1], '->', round(adjusted_mutual_info_score(dataframe[i[0]], dataframe[i[1]]), 3))
 
 
 def calc_percentage(part, whole, digits):
@@ -19,7 +76,7 @@ def make_percentage(number, digits):
 
 
 def prices_analysis():
-    products = load_jsonl_pd("products.jsonl")
+    products = load_jsonl_pd("data/products.jsonl")
 
     ceny = []
     negativeVal = 0
@@ -43,8 +100,8 @@ def prices_analysis():
 
 
 def plot_data():
-    products = load_jsonl_pd("products.jsonl")
-    sessions = load_jsonl_pd("sessions.jsonl")
+    products = load_jsonl_pd("data/products.jsonl")
+    sessions = load_jsonl_pd("data/sessions.jsonl")
     merge = pd.merge(sessions, products, on='product_id', how='left')
 
     categories = set()
@@ -93,12 +150,12 @@ if __name__ == '__main__':
     valid_events, all_events, valid_or_repr_events = 0, 0, 0
     purchases, views = 0, 0
     user_ids = set()
-    users_data = load_jsonl("users.jsonl")
+    users_data = load_jsonl("data/users.jsonl")
     for user in users_data:
         user_ids.add(user['user_id'])
 
     product_ids = set()
-    products_data = load_jsonl("products.jsonl")
+    products_data = load_jsonl("data/products.jsonl")
     for product in products_data:
         product_ids.add(product['product_id'])
 
@@ -107,7 +164,7 @@ if __name__ == '__main__':
     sessions_dict = dict()
     dates_set = set()
     events = list()
-    events_data = load_jsonl("sessions.jsonl")
+    events_data = load_jsonl("data/sessions.jsonl")
     for event in events_data:
         if event['user_id'] is not None:
             sessions_dict[event['session_id']] = event['user_id']
