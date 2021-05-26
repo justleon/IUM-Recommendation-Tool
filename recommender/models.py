@@ -25,7 +25,7 @@ class PopularityBasedRecommender:
 class ContentBasedRecommender:
     def __init__(self, data_handler: DataHandler):
         self.data_handler = data_handler
-        tf = TfidfVectorizer(use_idf=True)
+        tf = TfidfVectorizer(use_idf=True, min_df=0.0, max_df=0.5, ngram_range=(1, 2))
         self.product_ids = self.data_handler.products['product_id'].tolist()
         self.tfidf_matrix = tf.fit_transform(self.data_handler.products['product_name'] + ';'
                                              + self.data_handler.products['category_path'])
