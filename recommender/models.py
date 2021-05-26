@@ -1,6 +1,8 @@
 import scipy
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from typing import List
+
 from data_handler import DataHandler
 import pandas as pd
 import numpy as np
@@ -32,7 +34,7 @@ class ContentBasedRecommender:
     def create_product_profile(self, product_id: int):
         return self.tfidf_matrix[self.product_ids.index(product_id)]
 
-    def create_product_profiles(self, ids: list[int]):
+    def create_product_profiles(self, ids: List[int]):
         return scipy.sparse.vstack([self.create_product_profile(x) for x in ids])
 
     def create_user_profile(self, user_id: int, indexed_sessions: pd.DataFrame):
