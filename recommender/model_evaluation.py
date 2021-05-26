@@ -29,7 +29,7 @@ class ModelEvaluator:
         return hit, index
 
     def evaluate_model_for_user(self, model, user_id):
-        interacted_vals_test = self.data_handler.interactions_test.loc['user_id']
+        interacted_vals_test = self.data_handler.interactions_test_indexed.loc[user_id]
         if type(interacted_vals_test['product_id']) == pd.Series:
             person_interacted_items_test = set(interacted_vals_test['product_id'])
         else:
@@ -42,8 +42,8 @@ class ModelEvaluator:
 
         for product_id in person_interacted_items_test:
             non_interacted_sample = self.get_not_interacted_items_sample(user_id,
-                                                 EVAL_RANDOM_SAMPLE_NON_INTERACTED_ITEMS,
-                                                 product_id % (2 ** 32))
+                                                                         EVAL_RANDOM_SAMPLE_NON_INTERACTED_ITEMS,
+                                                                         product_id % (2 ** 32))
             items_to_filter_recommendations = non_interacted_sample.union(set([product_id]))
             valid_recommendations_temp = user_recommendations[
                 user_recommendations['product_id'].isin(items_to_filter_recommendations)]
@@ -74,8 +74,8 @@ class ModelEvaluator:
         print('processed ' + str(idx) + ' users')
 
         detailed_results = pd.DataFrame(users_metrics).sort_values('interacted_count', ascending=False)
-        global_rate_at_5 = detailed_results['hitrs@5_count'].sum() / float(detailed_results['interacted_count'].sum())
-        global_rate_at_10 = detailed_results['hitrs@10_count'].sum() / float(detailed_results['interacted_count'].sum())
+        global_rate_at_5 = detailed_results['hits@5_count'].sum() / float(detailed_results['interacted_count'].sum())
+        global_rate_at_10 = detailed_results['hits@10_count'].sum() / float(detailed_results['interacted_count'].sum())
 
         global_metrics = {
             'rate@5': global_rate_at_5,
