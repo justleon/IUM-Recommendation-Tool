@@ -1,5 +1,5 @@
 import random
-from typing import Union
+from typing import Union, Tuple
 
 import pandas as pd
 from data_handler import get_items_interacted, DataHandler
@@ -13,7 +13,7 @@ class ModelEvaluator:
     def __init__(self, data_handler: DataHandler):
         self.data_handler = data_handler
 
-    def get_not_interacted_items_sample(self, user_id: int, sample_size: int, seed: int = SEED):
+    def get_not_interacted_items_sample(self, user_id: int, sample_size: int, seed: int = SEED) -> set[int]:
         random.seed(seed)
 
         interacted_items = get_items_interacted(user_id, self.data_handler.interactions_indexed)
@@ -23,7 +23,7 @@ class ModelEvaluator:
         non_interacted_sample = random.sample(non_interacted, sample_size)
         return set(non_interacted_sample)
 
-    def if_hit_top_n(self, product_id: int, recommended_items: list[int], top_n: int):
+    def if_hit_top_n(self, product_id: int, recommended_items: list[int], top_n: int) -> Tuple[int, int]:
         try:
             index = next(i for i, c in enumerate(recommended_items) if c == product_id)
         except:
@@ -31,7 +31,8 @@ class ModelEvaluator:
         hit = int(index in range(0, top_n))
         return hit, index
 
-    def evaluate_model_for_user(self, model: Union[PopularityBasedRecommender, ContentBasedRecommender], user_id: int):
+    def evaluate_model_for_user(self, model: Union[PopularityBasedRecommender, ContentBasedRecommender], user_id: int) \
+            -> dict[str, Union[float]]:
         interacted_vals_test = self.data_handler.interactions_test_indexed.loc[user_id]
         if type(interacted_vals_test['product_id']) == pd.Series:
             person_interacted_items_test = set(interacted_vals_test['product_id'])
@@ -68,7 +69,7 @@ class ModelEvaluator:
         }
         return user_metrics
 
-    def evaluate(self, model: Union[PopularityBasedRecommender, ContentBasedRecommender]):
+    def evaluate(self, model: Union[PopularityBasedRecommender, ContentBasedRecommender]) -> dict[str, float]:
         users_metrics = []
         for idx, user_id in enumerate(list(self.data_handler.interactions_test_indexed.index.unique().values)):
             user_metrics = self.evaluate_model_for_user(model, user_id)

@@ -10,9 +10,7 @@ VIEW_PRODUCT_STRENGTH = 1
 BUY_PRODUCT_STRENGTH = 3
 
 
-def merge(
-        sessions: pd.DataFrame, products: pd.DataFrame, users: pd.DataFrame
-):
+def merge(sessions: pd.DataFrame, products: pd.DataFrame, users: pd.DataFrame) -> pd.DataFrame:
     merged = pd.merge(sessions, users, on='user_id')
     merged = pd.merge(merged, products, on='product_id')
     return merged
@@ -22,7 +20,7 @@ def smooth_preference(x: int):
     return math.log(1 + x, 2)
 
 
-def get_items_interacted(user_id: int, data_set: pd.DataFrame):
+def get_items_interacted(user_id: int, data_set: pd.DataFrame) -> set[int]:
     interacted_items = data_set.loc[user_id]['product_id']
     return set(interacted_items if type(interacted_items) == pd.Series else [interacted_items])
 
