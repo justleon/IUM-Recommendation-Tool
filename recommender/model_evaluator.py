@@ -18,12 +18,10 @@ class ModelEvaluator:
         self.data_handler = data_handler
 
     def get_not_interacted_items_sample(self, user_id: int, sample_size: int) -> set[int]:
-        random.seed(SEED)
-
         interacted_items = get_items_interacted(user_id, self.data_handler.interactions_indexed)
         all_items = set(self.data_handler.products['product_id'])
         non_interacted = all_items - interacted_items
-
+        random.seed(SEED)
         non_interacted_sample = random.sample(non_interacted, sample_size)
         return set(non_interacted_sample)
 
@@ -41,11 +39,10 @@ class ModelEvaluator:
             non_interacted_sample = self.get_not_interacted_items_sample(user_id,
                                                                          EVAL_RANDOM_SAMPLE_NON_INTERACTED_ITEMS)
             items_to_filter_recommendations = non_interacted_sample.union({product_id})
-            valid_recommendations_temp = user_recommendations[
-                user_recommendations['product_id'].isin(items_to_filter_recommendations)]
-            valid_recommendations = valid_recommendations_temp['product_id'].values
-            hits_at_5 += int(hit_top_n(product_id, valid_recommendations, 5))
-            hits_at_10 += int(hit_top_n(product_id, valid_recommendations, 10))
+            valid_recommendations = \
+                user_recommendations[user_recommendations['product_id'].isin(items_to_filter_recommendations)]
+            hits_at_5 += int(hit_top_n(product_id, valid_recommendations['product_id'].tolist(), 5))
+            hits_at_10 += int(hit_top_n(product_id, valid_recommendations['product_id'].tolist(), 10))
 
         rate_at_5 = hits_at_5 / float(interacted_items_count_test)
         rate_at_10 = hits_at_10 / float(interacted_items_count_test)
@@ -63,7 +60,6 @@ class ModelEvaluator:
         users_metrics = []
         for idx, user_id in enumerate(list(self.data_handler.interactions_test_indexed.index.unique().values)):
             user_metrics = self.evaluate_model_for_user(model, user_id)
-            user_metrics['_user_id'] = user_id
             users_metrics.append(user_metrics)
 
         detailed_results = pd.DataFrame(users_metrics).sort_values('interacted_count', ascending=False)

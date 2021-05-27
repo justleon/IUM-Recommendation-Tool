@@ -21,10 +21,14 @@ class PopularityBasedRecommender:
 
     def train(self) -> pd.DataFrame:
         product_popularity = self.data_handler.interactions_train_indexed.groupby('product_id')['event_type'].size() \
-            .sort_values(ascending=False).reset_index(name='popularity')
+            .reset_index(name='popularity')
         product_popularity['rec_strength'] = \
             product_popularity['popularity'] / product_popularity['popularity'].max()
-        return product_popularity
+        product_recommendations = self.data_handler.products[['product_id']]\
+            .merge(product_popularity[['product_id', 'rec_strength']], how='left', on='product_id')
+        product_recommendations['rec_strength'] = product_recommendations['rec_strength'].fillna(0.0)
+        product_recommendations = product_recommendations.sort_values(by=['rec_strength'], ascending=False)
+        return product_recommendations
 
     def predict(self, user_id: int) -> Union[pd.DataFrame, Any]:
         if user_id in set(self.data_handler.users['user_id']):

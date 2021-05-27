@@ -37,8 +37,8 @@ class DataHandler:
         interactions = sessions.merge(self.users, on='user_id')
         interactions = interactions.merge(self.products, on='product_id')
 
-        # interactions = interactions.groupby(['user_id', 'product_id'])['event_type'].sum() \
-        #     .apply(smooth_preference).reset_index()
+        interactions = interactions.groupby(['user_id', 'product_id'])['event_type'].sum() \
+            .apply(smooth_preference).reset_index()
 
         interactions_train, interactions_test = train_test_split(interactions, stratify=interactions['user_id'],
                                                                  test_size=TEST_SIZE, random_state=SEED)
