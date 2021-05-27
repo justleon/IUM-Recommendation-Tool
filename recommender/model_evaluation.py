@@ -75,7 +75,7 @@ class ModelEvaluator:
             user_metrics = self.evaluate_model_for_user(model, user_id)
             user_metrics['_user_id'] = user_id
             users_metrics.append(user_metrics)
-        print('processed ' + str(idx) + ' users')
+        # print('processed ' + str(idx) + ' users')
 
         detailed_results = pd.DataFrame(users_metrics).sort_values('interacted_count', ascending=False)
         global_rate_at_5 = detailed_results['hits@5_count'].sum() / float(detailed_results['interacted_count'].sum())

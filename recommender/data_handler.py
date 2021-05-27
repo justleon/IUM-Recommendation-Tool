@@ -39,17 +39,17 @@ class DataHandler:
         user_interactions_num = sessions.groupby(['user_id', 'product_id']).size().groupby('user_id').size()
         users_enough_interactions = user_interactions_num[user_interactions_num >= MIN_INTERACTIONS] \
             .reset_index(['user_id'])
-        print("users: " + str(len(user_interactions_num)))
+        # print("users: " + str(len(user_interactions_num)))
 
         interactions = sessions.merge(users_enough_interactions, how='right', left_on='user_id', right_on='user_id')
         self.interactions = interactions.groupby(['user_id', 'product_id'])['event_type'].sum() \
             .apply(smooth_preference).reset_index()
-        print("total unique interactions: " + str(len(interactions)))
+        # print("total unique interactions: " + str(len(interactions)))
 
         interactions_train, interactions_test = train_test_split(interactions, stratify=interactions['user_id'],
                                                                  test_size=TEST_SIZE, random_state=SEED)
-        print("train set: " + str(len(interactions_train)))
-        print("test set: " + str(len(interactions_test)))
+        # print("train set: " + str(len(interactions_train)))
+        # print("test set: " + str(len(interactions_test)))
 
         # to speed up the search process during evaluation we index the sets
         self.interactions_indexed = interactions.set_index('user_id')
