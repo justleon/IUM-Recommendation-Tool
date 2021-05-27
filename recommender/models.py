@@ -50,7 +50,7 @@ class ContentBasedRecommender:
     def get_product_profiles(self, ids: list[int]) -> pd.DataFrame:
         return scipy.sparse.vstack([self.get_product_profile(x) for x in ids])
 
-    def create_user_profile(self, user_id: int, indexed_sessions: np.matrix):
+    def create_user_profile(self, user_id: int, indexed_sessions: np.matrix) -> np.matrix:
         indexed_user_sessions = indexed_sessions.loc[user_id]
         user_product_profiles = self.get_product_profiles(indexed_user_sessions['product_id'])
         user_product_events = np.array(indexed_user_sessions['event_type']).reshape(-1, 1)
