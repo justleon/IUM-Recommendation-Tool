@@ -18,11 +18,11 @@ def merge(
     return merged
 
 
-def smooth_preference(x):
+def smooth_preference(x: int):
     return math.log(1 + x, 2)
 
 
-def get_items_interacted(user_id: int, data_set):
+def get_items_interacted(user_id: int, data_set: pd.DataFrame):
     interacted_items = data_set.loc[user_id]['product_id']
     return set(interacted_items if type(interacted_items) == pd.Series else [interacted_items])
 
@@ -53,7 +53,7 @@ class DataHandler:
         print("train set: " + str(len(interactions_train)))
         print("test set: " + str(len(interactions_test)))
 
-        #to speed up the search process during evaluation we index the sets
+        # to speed up the search process during evaluation we index the sets
         self.interactions_indexed = interactions.set_index('user_id')
         self.interactions_train_indexed = interactions_train.set_index('user_id')
         self.interactions_test_indexed = interactions_test.set_index('user_id')

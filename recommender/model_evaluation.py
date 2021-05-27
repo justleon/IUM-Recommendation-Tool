@@ -1,16 +1,19 @@
 import random
+from typing import Union
+
 import pandas as pd
-from data_handler import get_items_interacted
+from data_handler import get_items_interacted, DataHandler
+from models import PopularityBasedRecommender, ContentBasedRecommender
 
 SEED = 1
 EVAL_RANDOM_SAMPLE_NON_INTERACTED_ITEMS = 100
 
 
 class ModelEvaluator:
-    def __init__(self, data_handler):
+    def __init__(self, data_handler: DataHandler):
         self.data_handler = data_handler
 
-    def get_not_interacted_items_sample(self, user_id: int, sample_size, seed=SEED):
+    def get_not_interacted_items_sample(self, user_id: int, sample_size: int, seed: int = SEED):
         random.seed(seed)
 
         interacted_items = get_items_interacted(user_id, self.data_handler.interactions_indexed)
@@ -20,7 +23,7 @@ class ModelEvaluator:
         non_interacted_sample = random.sample(non_interacted, sample_size)
         return set(non_interacted_sample)
 
-    def if_hit_top_n(self, product_id, recommended_items, top_n):
+    def if_hit_top_n(self, product_id: int, recommended_items: list[int], top_n: int):
         try:
             index = next(i for i, c in enumerate(recommended_items) if c == product_id)
         except:
@@ -28,12 +31,12 @@ class ModelEvaluator:
         hit = int(index in range(0, top_n))
         return hit, index
 
-    def evaluate_model_for_user(self, model, user_id):
+    def evaluate_model_for_user(self, model: Union[PopularityBasedRecommender, ContentBasedRecommender], user_id: int):
         interacted_vals_test = self.data_handler.interactions_test_indexed.loc[user_id]
         if type(interacted_vals_test['product_id']) == pd.Series:
             person_interacted_items_test = set(interacted_vals_test['product_id'])
         else:
-            person_interacted_items_test = set([int(interacted_vals_test['product_id'])])
+            person_interacted_items_test = {int(interacted_vals_test['product_id'])}
         interacted_items_count_test = len(person_interacted_items_test)
 
         user_recommendations = model.predict(user_id)
@@ -44,7 +47,7 @@ class ModelEvaluator:
             non_interacted_sample = self.get_not_interacted_items_sample(user_id,
                                                                          EVAL_RANDOM_SAMPLE_NON_INTERACTED_ITEMS,
                                                                          product_id % (2 ** 32))
-            items_to_filter_recommendations = non_interacted_sample.union(set([product_id]))
+            items_to_filter_recommendations = non_interacted_sample.union({product_id})
             valid_recommendations_temp = user_recommendations[
                 user_recommendations['product_id'].isin(items_to_filter_recommendations)]
             valid_recommendations = valid_recommendations_temp['product_id'].values
@@ -65,7 +68,7 @@ class ModelEvaluator:
         }
         return user_metrics
 
-    def evaluate(self, model):
+    def evaluate(self, model: Union[PopularityBasedRecommender, ContentBasedRecommender]):
         users_metrics = []
         for idx, user_id in enumerate(list(self.data_handler.interactions_test_indexed.index.unique().values)):
             user_metrics = self.evaluate_model_for_user(model, user_id)
