@@ -11,10 +11,14 @@ import numpy as np
 class PopularityBasedRecommender:
     def __init__(self, data_handler: DataHandler):
         self.data_handler = data_handler
-        self.product_popularity = self.data_handler.sessions.groupby('product_id')['event_type'].size() \
+        self.product_popularity = self.train()
+
+    def train(self):
+        product_popularity = self.data_handler.sessions.groupby('product_id')['event_type'].size() \
             .sort_values(ascending=False).reset_index(name='popularity')
-        self.product_popularity['rec_strength'] = \
-            self.product_popularity['popularity'] / self.product_popularity['popularity'].max()
+        product_popularity['rec_strength'] = \
+            product_popularity['popularity'] / product_popularity['popularity'].max()
+        return product_popularity
 
     def predict(self, user_id: int):
         if user_id in set(self.data_handler.users['user_id']):
@@ -25,26 +29,29 @@ class PopularityBasedRecommender:
 class ContentBasedRecommender:
     def __init__(self, data_handler: DataHandler):
         self.data_handler = data_handler
-        tf = TfidfVectorizer(use_idf=True, min_df=0.0, max_df=0.5, ngram_range=(1, 2))
         self.product_ids = self.data_handler.products['product_id'].tolist()
-        self.tfidf_matrix = tf.fit_transform(self.data_handler.products['product_name'] + ';'
-                                             + self.data_handler.products['category_path'])
-        self.user_profiles = self.create_users_profiles()
+        self.tfidf_matrix = self.train()
+        self.user_profiles = self.create_user_profiles()
 
-    def create_product_profile(self, product_id: int):
+    def train(self):
+        tf = TfidfVectorizer(min_df=0.0, max_df=0.5, ngram_range=(1, 3))
+        return tf.fit_transform(self.data_handler.products['product_name'] + ';'
+                                + self.data_handler.products['category_path'])
+
+    def get_product_profile(self, product_id: int):
         return self.tfidf_matrix[self.product_ids.index(product_id)]
 
-    def create_product_profiles(self, ids: List[int]):
-        return scipy.sparse.vstack([self.create_product_profile(x) for x in ids])
+    def get_product_profiles(self, ids: List[int]):
+        return scipy.sparse.vstack([self.get_product_profile(x) for x in ids])
 
     def create_user_profile(self, user_id: int, indexed_sessions: pd.DataFrame):
         indexed_user_sessions = indexed_sessions.loc[user_id]
-        user_product_profiles = self.create_product_profiles(indexed_user_sessions['product_id'])
+        user_product_profiles = self.get_product_profiles(indexed_user_sessions['product_id'])
         user_product_events = np.array(indexed_user_sessions['event_type']).reshape(-1, 1)
         return np.sum(user_product_profiles.multiply(user_product_events), axis=0) / np.sum(
             user_product_events)
 
-    def create_users_profiles(self):
+    def create_user_profiles(self):
         indexed_sessions = self.data_handler.sessions.set_index('user_id')
         user_profiles = {}
         for user_id in indexed_sessions.index.unique():
