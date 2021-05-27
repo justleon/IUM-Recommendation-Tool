@@ -6,6 +6,11 @@ from data_handler import DataHandler
 import pandas as pd
 import numpy as np
 
+# parameters for TfidfVectorizer
+MIN_DF = 0.0
+MAX_DF = 0.5
+NGRAM_RANGE = (1, 3)
+
 
 class PopularityBasedRecommender:
     def __init__(self, data_handler: DataHandler):
@@ -33,7 +38,7 @@ class ContentBasedRecommender:
         self.user_profiles = self.create_user_profiles()
 
     def train(self):
-        tf = TfidfVectorizer(min_df=0.0, max_df=0.5, ngram_range=(1, 3))
+        tf = TfidfVectorizer(min_df=MIN_DF, max_df=MAX_DF, ngram_range=NGRAM_RANGE)
         return tf.fit_transform(self.data_handler.products['product_name'] + ';'
                                 + self.data_handler.products['category_path'])
 
