@@ -4,9 +4,9 @@ na kierunku Informatyka, specjalizacji Inżynieria Systemów Informacyjnych (ISI
 Wydziale Elektroniki i Technik Informacyjnych (EiTI) Politechniki Warszawskiej.
 
 **Prowadzący projekt**: dr inż. Paweł Zawistowski  
-**Ocena**:
-I Etap: 19/20 (przed poprawką 17/20)
-II Etap: ??/30
+**Ocena**:  
+**I Etap**: 19/20 (17/20 przed poprawką)  
+**II Etap**: ??/30
 ### Autorzy
-Łukasz Pokorzyński, nr 300251
+Łukasz Pokorzyński, nr 300251  
 Michał Wiszenko, nr 300285
