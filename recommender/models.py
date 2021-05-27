@@ -20,7 +20,7 @@ class PopularityBasedRecommender:
         self.product_popularity = self.train()
 
     def train(self) -> pd.DataFrame:
-        product_popularity = self.data_handler.sessions.groupby('product_id')['event_type'].size() \
+        product_popularity = self.data_handler.interactions_train_indexed.groupby('product_id')['event_type'].size() \
             .sort_values(ascending=False).reset_index(name='popularity')
         product_popularity['rec_strength'] = \
             product_popularity['popularity'] / product_popularity['popularity'].max()
@@ -58,7 +58,7 @@ class ContentBasedRecommender:
             user_product_events)
 
     def create_user_profiles(self) -> dict[int, np.matrix]:
-        indexed_sessions = self.data_handler.sessions.set_index('user_id')
+        indexed_sessions = self.data_handler.interactions_train_indexed
         user_profiles = {}
         for user_id in indexed_sessions.index.unique():
             user_profiles[user_id] = self.create_user_profile(user_id, indexed_sessions)
