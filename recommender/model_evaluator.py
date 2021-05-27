@@ -30,10 +30,7 @@ class ModelEvaluator:
     def evaluate_model_for_user(self, model: Union[PopularityBasedRecommender, ContentBasedRecommender], user_id: int) \
             -> dict[str, Union[float]]:
         interacted_vals_test = self.data_handler.interactions_test_indexed.loc[user_id]
-        if type(interacted_vals_test['product_id']) == pd.Series:
-            person_interacted_items_test = set(interacted_vals_test['product_id'])
-        else:
-            person_interacted_items_test = {int(interacted_vals_test['product_id'])}
+        person_interacted_items_test = set(interacted_vals_test['product_id'])
         interacted_items_count_test = len(person_interacted_items_test)
 
         user_recommendations = model.predict(user_id)
@@ -68,7 +65,6 @@ class ModelEvaluator:
             user_metrics = self.evaluate_model_for_user(model, user_id)
             user_metrics['_user_id'] = user_id
             users_metrics.append(user_metrics)
-        # print('processed ' + str(idx) + ' users')
 
         detailed_results = pd.DataFrame(users_metrics).sort_values('interacted_count', ascending=False)
         global_rate_at_5 = detailed_results['hits@5_count'].sum() / float(detailed_results['interacted_count'].sum())

@@ -37,15 +37,11 @@ class DataHandler:
         interactions = sessions.merge(self.users, on='user_id')
         interactions = interactions.merge(self.products, on='product_id')
 
-        interactions = interactions.groupby(['user_id', 'product_id'])['event_type'].sum() \
-            .apply(smooth_preference).reset_index()
-
-        # print("total unique interactions: " + str(len(interactions)))
+        # interactions = interactions.groupby(['user_id', 'product_id'])['event_type'].sum() \
+        #     .apply(smooth_preference).reset_index()
 
         interactions_train, interactions_test = train_test_split(interactions, stratify=interactions['user_id'],
                                                                  test_size=TEST_SIZE, random_state=SEED)
-        # print("train set: " + str(len(interactions_train)))
-        # print("test set: " + str(len(interactions_test)))
 
         # to speed up the search process during evaluation we index the sets
         self.interactions_indexed = interactions.set_index('user_id')
