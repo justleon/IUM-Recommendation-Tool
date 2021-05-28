@@ -43,8 +43,8 @@ class ContentBasedRecommender:
         self.tfidf_matrix = self.train()
         self.user_profiles = self.create_user_profiles()
 
-    def train(self) -> pd.DataFrame:
-        tf = TfidfVectorizer(min_df=MIN_DF, max_df=MAX_DF, ngram_range=NGRAM_RANGE)
+    def train(self, min_df=MIN_DF, max_df=MAX_DF, ngram_range=NGRAM_RANGE) -> pd.DataFrame:
+        tf = TfidfVectorizer(min_df=min_df, max_df=max_df, ngram_range=ngram_range)
         return tf.fit_transform(self.data_handler.products['product_name'] + ';'
                                 + self.data_handler.products['category_path'])
 
