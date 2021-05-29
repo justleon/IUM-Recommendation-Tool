@@ -22,9 +22,9 @@ def smooth_preference(x: int):
     return math.log(1 + x, 2)
 
 
-def get_items_interacted(user_id: int, data_set: pd.DataFrame) -> set[int]:
-    interacted_items = data_set.loc[user_id]['product_id']
-    return set(interacted_items)
+def get_interacted_products(user_id: int, data_set: pd.DataFrame) -> set[int]:
+    interacted_products = data_set.loc[user_id]['product_id']
+    return set(interacted_products)
 
 
 class DataHandler:
