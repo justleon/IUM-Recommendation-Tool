@@ -5,7 +5,9 @@ from utils import load_jsonl_pd
 
 SEED = 1
 MIN_INTERACTIONS = 5
-TEST_SIZE = 1 / 3
+TEST_RATIO = 0.2
+VAL_RATIO = 0.2
+TRAIN_RATIO = 1 - TEST_RATIO - VAL_RATIO
 VIEW_PRODUCT_STRENGTH = 1
 BUY_PRODUCT_STRENGTH = 3
 
@@ -32,7 +34,6 @@ class DataHandler:
                                                     'BUY_PRODUCT': BUY_PRODUCT_STRENGTH}})
         self.products = load_jsonl_pd("data/products.jsonl")
         self.users = load_jsonl_pd("data/users.jsonl")
-        # self.sessions.drop('street', axis='columns', inplace=True)
 
         interactions = sessions.merge(self.users, on='user_id')
         interactions = interactions.merge(self.products, on='product_id')
@@ -41,9 +42,15 @@ class DataHandler:
             .apply(smooth_preference).reset_index()
 
         interactions_train, interactions_test = train_test_split(interactions, stratify=interactions['user_id'],
-                                                                 test_size=TEST_SIZE, random_state=SEED)
+                                                                 test_size=TEST_RATIO, random_state=SEED)
+
+        interactions_train, interactions_val = train_test_split(interactions_train,
+                                                                stratify=interactions_train['user_id'],
+                                                                test_size=VAL_RATIO / (VAL_RATIO + TRAIN_RATIO),
+                                                                random_state=SEED)
 
         # to speed up the search process during evaluation we index the sets
         self.interactions_indexed = interactions.set_index('user_id')
         self.interactions_train_indexed = interactions_train.set_index('user_id')
         self.interactions_test_indexed = interactions_test.set_index('user_id')
+        self.interactions_val_indexed = interactions_val.set_index('user_id')
