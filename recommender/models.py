@@ -1,6 +1,6 @@
 from typing import Union, Any
 
-import scipy
+from scipy import sparse
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -52,7 +52,7 @@ class ContentBasedRecommender:
         return self.tfidf_matrix[self.product_ids.index(product_id)]
 
     def get_product_profiles(self, ids: list[int]) -> pd.DataFrame:
-        return scipy.sparse.vstack([self.get_product_profile(x) for x in ids])
+        return sparse.vstack([self.get_product_profile(x) for x in ids])
 
     def create_user_profile(self, user_id: int, indexed_sessions: np.matrix) -> np.matrix:
         indexed_user_sessions = indexed_sessions.loc[user_id]
