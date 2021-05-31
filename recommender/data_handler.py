@@ -2,12 +2,11 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 import math
 from utils import load_jsonl_pd
-
-SEED = 1
-MIN_INTERACTIONS = 5
-TEST_SIZE = 1 / 3
-VIEW_PRODUCT_STRENGTH = 1
-BUY_PRODUCT_STRENGTH = 3
+from config import SEED,\
+    MIN_INTERACTIONS,\
+    TEST_SIZE,\
+    VIEW_PRODUCT_STRENGTH,\
+    BUY_PRODUCT_STRENGTH
 
 
 def merge(sessions: pd.DataFrame, products: pd.DataFrame, users: pd.DataFrame) -> pd.DataFrame:

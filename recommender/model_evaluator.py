@@ -4,9 +4,8 @@ from typing import Union
 import pandas as pd
 from data_handler import get_items_interacted, DataHandler
 from models import PopularityBasedRecommender, ContentBasedRecommender
-
-SEED = 1
-EVAL_RANDOM_SAMPLE_NON_INTERACTED_ITEMS = 100
+from config import SEED,\
+    EVAL_RANDOM_SAMPLE_NON_INTERACTED_ITEMS
 
 
 def hit_top_n(product_id: int, recommended_items: list[int], top_n: int) -> int:

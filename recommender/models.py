@@ -7,11 +7,10 @@ from sklearn.metrics.pairwise import cosine_similarity
 from data_handler import DataHandler
 import pandas as pd
 import numpy as np
-
 # parameters for TfidfVectorizer
-MIN_DF = 0.0
-MAX_DF = 0.5
-NGRAM_RANGE = (1, 3)
+from config import MIN_DF,\
+    MAX_DF,\
+    NGRAM_RANGE
 
 
 class PopularityBasedRecommender:
