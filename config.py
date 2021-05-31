@@ -1,3 +1,6 @@
+import os
+ROOT = os.path.dirname(os.path.abspath(__file__))
+
 SEED = 1
 MIN_INTERACTIONS = 5
 TEST_SIZE = 1 / 3
