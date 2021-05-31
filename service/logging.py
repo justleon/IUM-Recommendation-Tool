@@ -6,7 +6,7 @@ import pandas as pd
 
 
 def write_to_log(data: Union[pd.DataFrame, Any]):
-    with open(f'{ROOT}/recommendations_log.json', mode='r+') as f:
+    with open(f'{ROOT}\\recommendations_log.json', mode='r+') as f:
         log = json.load(f)
         recommendations = log["recommendations"]
         recommendations.append(data)

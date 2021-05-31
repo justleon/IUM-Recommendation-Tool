@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 import math
-from utils import load_jsonl_pd
+from recommender.utils import load_jsonl_pd
 from config import SEED, \
     TEST_SIZE,\
     VIEW_PRODUCT_STRENGTH,\
