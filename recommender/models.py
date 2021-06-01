@@ -93,3 +93,7 @@ def pickle_models():
     with open(f'{ROOT}\\{content_based_path}', 'wb') as content_based_model_file:
         pickle.dump(content_based_model, content_based_model_file)
     content_based_model_file.close()
+
+
+if __name__ == "__main__":
+    pickle_models()
