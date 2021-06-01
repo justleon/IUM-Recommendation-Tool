@@ -7,6 +7,8 @@ from service.logging import write_to_log
 
 class Recommendations(Resource):
     def get(self, user_id):
+        if user_id < 102 or user_id > 301:
+            return 'no user with that ID'
         model = get_model(user_id)
         date = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
         products = list(model.predict(user_id)['product_id'].head(10))
