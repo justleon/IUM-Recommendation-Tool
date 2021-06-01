@@ -1,3 +1,4 @@
+import os
 from typing import Union, Any
 
 import json
@@ -6,14 +7,11 @@ import pandas as pd
 
 
 def write_to_log(data: Union[pd.DataFrame, Any]):
-    with open(f'{ROOT}\\recommendations_log.json', mode='r+') as f:
-        log = json.load(f)
-        recommendations = log["recommendations"]
-        recommendations.append(data)
-        new_log = {
-            "recommendations": recommendations
-        }
+    if not os.path.isfile(f'{ROOT}\\recommendations_log.jsonl'):
+        new_log_file = open(f'{ROOT}\\recommendations_log.jsonl', 'w')
+        new_log_file.close()
 
-        f.seek(0)
-        json.dump(new_log, f)
+    with open(f'{ROOT}\\recommendations_log.jsonl', mode='a') as f:
+        new_log = json.dumps(data)
+        f.write(new_log + "\n")
     f.close()
