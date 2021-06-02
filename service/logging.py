@@ -2,7 +2,7 @@ import os
 from typing import Union, Any
 
 import json
-from config import ROOT
+from recommender.config import ROOT
 import pandas as pd
 
 
