@@ -5,7 +5,7 @@ import pandas as pd
 from data_handler import get_interacted_products, DataHandler
 from models import PopularityBasedRecommender, ContentBasedRecommender
 
-from config import SEED,\
+from config import SEED, \
     EVAL_RANDOM_SAMPLE_NON_INTERACTED_ITEMS
 
 

@@ -3,10 +3,10 @@ from sklearn.model_selection import train_test_split
 import math
 from utils import load_jsonl_pd
 from config import SEED, \
-    TRAIN_SIZE,\
-    TEST_SIZE,\
-    VAL_SIZE,\
-    VIEW_PRODUCT_STRENGTH,\
+    TRAIN_SIZE, \
+    TEST_SIZE, \
+    VAL_SIZE, \
+    VIEW_PRODUCT_STRENGTH, \
     BUY_PRODUCT_STRENGTH
 
 
