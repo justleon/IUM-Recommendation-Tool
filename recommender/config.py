@@ -2,7 +2,6 @@ import os
 ROOT = os.path.dirname(os.path.abspath(__file__))
 
 SEED = 1
-MIN_INTERACTIONS = 5
 TRAIN_SIZE = 0.2
 TEST_SIZE = 0.2
 VAL_SIZE = 0.6
