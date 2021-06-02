@@ -8,11 +8,6 @@ from data_handler import DataHandler
 import pandas as pd
 import numpy as np
 
-# parameters for TfidfVectorizer
-MIN_DF = 0.0
-MAX_DF = 0.5
-NGRAM_RANGE = (1, 3)
-
 
 class PopularityBasedRecommender:
     def __init__(self, data_handler: DataHandler):
@@ -24,7 +19,7 @@ class PopularityBasedRecommender:
             .reset_index(name='popularity')
         product_popularity['rec_strength'] = \
             product_popularity['popularity'] / product_popularity['popularity'].max()
-        product_recommendations = self.data_handler.products[['product_id']]\
+        product_recommendations = self.data_handler.products[['product_id']] \
             .merge(product_popularity[['product_id', 'rec_strength']], how='left', on='product_id')
         product_recommendations['rec_strength'] = product_recommendations['rec_strength'].fillna(0.0)
         product_recommendations = product_recommendations.sort_values(by=['rec_strength'], ascending=False)
@@ -39,14 +34,16 @@ class PopularityBasedRecommender:
 class ContentBasedRecommender:
     def __init__(self, data_handler: DataHandler):
         self.data_handler = data_handler
-        self.product_ids = self.data_handler.products['product_id'].tolist()
-        self.tfidf_matrix = self.train()
-        self.user_profiles = self.create_user_profiles()
+        self.tfidf_matrix = None
+        self.product_ids = None
+        self.user_profiles = None
 
-    def train(self, min_df=MIN_DF, max_df=MAX_DF, ngram_range=NGRAM_RANGE) -> pd.DataFrame:
+    def train(self, min_df, max_df, ngram_range):
         tf = TfidfVectorizer(min_df=min_df, max_df=max_df, ngram_range=ngram_range)
-        return tf.fit_transform(self.data_handler.products['product_name'] + ';'
-                                + self.data_handler.products['category_path'])
+        self.tfidf_matrix = tf.fit_transform(self.data_handler.products['product_name'] + ';'
+                                             + self.data_handler.products['category_path'])
+        self.product_ids = self.data_handler.products['product_id'].tolist()
+        self.user_profiles = self.create_user_profiles()
 
     def get_product_profile(self, product_id: int) -> pd.DataFrame:
         return self.tfidf_matrix[self.product_ids.index(product_id)]

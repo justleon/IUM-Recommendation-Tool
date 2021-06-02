@@ -25,9 +25,9 @@ class ModelEvaluator:
         non_interacted_products_sample = random.sample(non_interacted_products, sample_size)
         return set(non_interacted_products_sample)
 
-    def evaluate_model_for_user(self, model: Union[PopularityBasedRecommender, ContentBasedRecommender], user_id: int) \
-            -> dict[str, Union[float]]:
-        user_interactions = self.data_handler.interactions_test_indexed.loc[user_id]
+    def evaluate_model_for_user(self, model: Union[PopularityBasedRecommender, ContentBasedRecommender], user_id: int,
+                                interactions: pd.DataFrame) -> dict[str, Union[float]]:
+        user_interactions = interactions.loc[user_id]
         interacted_products = set(user_interactions['product_id'])
         interacted_products_count = len(interacted_products)
 
@@ -55,10 +55,11 @@ class ModelEvaluator:
         }
         return user_metrics
 
-    def evaluate(self, model: Union[PopularityBasedRecommender, ContentBasedRecommender]) -> dict[str, float]:
+    def evaluate(self, model: Union[PopularityBasedRecommender, ContentBasedRecommender], interactions: pd.DataFrame) \
+            -> dict[str, float]:
         users_metrics = []
-        for idx, user_id in enumerate(list(self.data_handler.interactions_test_indexed.index.unique().values)):
-            user_metrics = self.evaluate_model_for_user(model, user_id)
+        for idx, user_id in enumerate(list(interactions.index.unique().values)):
+            user_metrics = self.evaluate_model_for_user(model, user_id, interactions)
             users_metrics.append(user_metrics)
 
         detailed_results = pd.DataFrame(users_metrics).sort_values('interacted_count', ascending=False)
