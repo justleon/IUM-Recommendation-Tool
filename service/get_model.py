@@ -4,12 +4,12 @@ popularity_path = 'models/popularity_model.pkl'
 content_based_path = "models/content_based_model.pkl"
 
 
-def get_model(user_id: int):
-    if user_id % 2 == 0:
-        model_file = open(popularity_path, 'rb')
-    else:
-        model_file = open(content_based_path, 'rb')
-
+def get_model(model_id: int):
+    models = {
+        1: popularity_path,
+        2: content_based_path
+    }
+    model_file = open(models[model_id], 'rb')
     model = pickle.load(model_file)
     model_file.close()
 
