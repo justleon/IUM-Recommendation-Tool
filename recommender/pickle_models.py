@@ -1,9 +1,9 @@
 import pickle
 
-from config import ROOT, PARAMETER_LIST
-from data_handler import DataHandler
-from model_evaluator import ModelEvaluator
-from models import ContentBasedRecommender, PopularityBasedRecommender
+from .config import ROOT, PARAMETER_LIST
+from .data_handler import DataHandler
+from .model_evaluator import ModelEvaluator
+from .models import ContentBasedRecommender, PopularityBasedRecommender
 
 
 def pickle_models():
@@ -29,7 +29,6 @@ def pickle_models():
         pickle.dump(popularity_model, popularity_model_file)
     popularity_model_file.close()
 
-    print(ROOT)
     with open(f'{ROOT}/{content_based_path}', 'wb') as content_based_model_file:
         pickle.dump(content_based_model, content_based_model_file)
     content_based_model_file.close()

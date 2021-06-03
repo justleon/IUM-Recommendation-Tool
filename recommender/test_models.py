@@ -1,7 +1,7 @@
-from config import PARAMETER_LIST
-from models import PopularityBasedRecommender, ContentBasedRecommender
-from data_handler import DataHandler
-from model_evaluator import ModelEvaluator
+from .config import PARAMETER_LIST
+from .models import PopularityBasedRecommender, ContentBasedRecommender
+from .data_handler import DataHandler
+from .model_evaluator import ModelEvaluator
 
 if __name__ == "__main__":
     dh = DataHandler()

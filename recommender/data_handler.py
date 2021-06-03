@@ -1,8 +1,8 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 import math
-from utils import load_jsonl_pd
-from config import SEED, \
+from .utils import load_jsonl_pd
+from .config import SEED, \
     TRAIN_SIZE, \
     TEST_SIZE, \
     VAL_SIZE, \
@@ -27,11 +27,11 @@ def get_interacted_products(user_id: int, data_set: pd.DataFrame) -> set[int]:
 
 class DataHandler:
     def __init__(self):
-        sessions = load_jsonl_pd("data/sessions.jsonl")
+        sessions = load_jsonl_pd("recommender/data/sessions.jsonl")
         sessions = sessions.replace({'event_type': {'VIEW_PRODUCT': VIEW_PRODUCT_STRENGTH,
                                                     'BUY_PRODUCT': BUY_PRODUCT_STRENGTH}})
-        self.products = load_jsonl_pd("data/products.jsonl")
-        self.users = load_jsonl_pd("data/users.jsonl")
+        self.products = load_jsonl_pd("recommender/data/products.jsonl")
+        self.users = load_jsonl_pd("recommender/data/users.jsonl")
 
         interactions = sessions.merge(self.users, on='user_id')
         interactions = interactions.merge(self.products, on='product_id')

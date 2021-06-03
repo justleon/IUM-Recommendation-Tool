@@ -1,6 +1,6 @@
 import os
 
-ROOT = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(os.path.abspath(os.path.join(__file__, os.pardir)))
 
 SEED = 1
 TEST_SIZE = 0.2

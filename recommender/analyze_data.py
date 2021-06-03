@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from utils import load_jsonl_pd, load_jsonl
+from .utils import load_jsonl_pd, load_jsonl
 from sklearn.metrics import adjusted_mutual_info_score
 from itertools import combinations
 from datetime import datetime

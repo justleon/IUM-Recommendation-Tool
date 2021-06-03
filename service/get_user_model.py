@@ -1,7 +1,7 @@
 import pickle
 
-popularity_path = 'models\\popularity_model.pkl'
-content_based_path = "models\\content_based_model.pkl"
+popularity_path = 'models/popularity_model.pkl'
+content_based_path = "models/content_based_model.pkl"
 
 
 def get_model(user_id: int):
