@@ -27,7 +27,7 @@ class Recommendations(Resource):
             if m is None:
                 code = 400
                 errors.append('Model parameter has to be an integer')
-            elif m != 1 and m != 2:
+            elif m != 0 and m != 1:
                 if code == 200:
                     code = 404
                 errors.append('This model does not exist')
@@ -53,39 +53,32 @@ class Recommendations(Resource):
         else:
             user_ids = list(range(102, 302))
 
-        model_ids: list = []
+        model_id: int = -1
         if 'model' in request.args:
-            model_ids.append(request.args.get('model', type=int))
-        else:
-            model_ids = list(range(1, 3))
+            model_id = request.args.get('model', type=int)
 
         models: dict = {
-            1: get_model(1),
-            2: get_model(2)
+            0: get_model(0),
+            1: get_model(1)
         }
-        for model_id in model_ids:
-            models[model_id] = get_model(model_id)
+
+        for m_id in range(0, 2):
+            models[model_id] = get_model(m_id)
 
         predictions: list = []
-        for model_id in model_ids:
-            model_predictions = []
-            for user_id in user_ids:
-                user_predictions = models[model_id].predict(user_id)
-                if len(user_predictions) != 0:
-                    user_predictions = user_predictions['product_id']
-                    if 'head' in request.args:
-                        user_predictions = user_predictions.head(request.args.get('head', type=int))
-                    user_data = {
-                        "user_id": user_id,
-                        "user_recommendations": list(user_predictions) if type(user_predictions) != list else []
-                    }
-                    model_predictions.append(user_data)
-
-            model_data = {
-                "model_id": model_id,
-                "model_recommendations": model_predictions
-            }
-            predictions.append(model_data)
+        for user_id in user_ids:
+            user_model = model_id if model_id != -1 else user_id % 2
+            user_predictions = models[user_model].predict(user_id)
+            if len(user_predictions) != 0:
+                user_predictions = user_predictions['product_id']
+                if 'head' in request.args:
+                    user_predictions = user_predictions.head(request.args.get('head', type=int))
+                user_data = {
+                    "user_id": user_id,
+                    "model_id": user_model,
+                    "user_recommendations": list(user_predictions) if type(user_predictions) != list else []
+                }
+                predictions.append(user_data)
 
         message = {
             "status": "success",
