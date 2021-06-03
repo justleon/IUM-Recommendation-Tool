@@ -9,8 +9,9 @@ if __name__ == "__main__":
     content_based_model = ContentBasedRecommender(dh)
     model_evaluator = ModelEvaluator(dh)
 
+    pop_result = model_evaluator.evaluate(popularity_model, dh.interactions_test_indexed)
     print("---POPULARITY BASED MODEL---")
-    print(model_evaluator.evaluate(popularity_model, dh.interactions_test_indexed))
+    print(pop_result)
 
     curr_max = 0
     best_params = None
@@ -20,8 +21,10 @@ if __name__ == "__main__":
         if (result['rate@5'] + result['rate@10']) > curr_max:
             curr_max = result['rate@5'] + result['rate@10']
             best_params = params
-
     content_based_model.train(best_params[0], best_params[1], best_params[2])
 
+    cb_result = model_evaluator.evaluate(content_based_model, dh.interactions_test_indexed)
     print("\n---CONTENT BASED MODEL---")
-    print(model_evaluator.evaluate(content_based_model, dh.interactions_test_indexed))
+    print(cb_result)
+    print({"best_params": best_params})
+
