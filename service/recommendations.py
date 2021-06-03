@@ -90,5 +90,6 @@ class Recommendations(Resource):
                 "recommendations": predictions
             }
         }
-        # write_to_log(recommendation)
+
+        write_to_log(message['data'])
         return jsonify(message)
