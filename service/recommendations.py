@@ -12,12 +12,19 @@ class Recommendations(Resource):
         errors: list[str] = []
         user_ids: list = []
 
+        models: dict = {
+            0: get_model(0),
+            1: get_model(1)
+        }
+
+        all_user_ids = set(models[0].data_handler.users['user_id'])
+
         if 'user' in request.args:
             u = request.args.get('user', type=int)
             if u is None:
                 code = 400
                 errors.append('User parameter has to be an integer')
-            elif u < 101 or u > 301:
+            elif u not in all_user_ids:
                 if code == 200:
                     code = 404
                 errors.append('This user does not exist')
@@ -51,16 +58,11 @@ class Recommendations(Resource):
         if 'user' in request.args:
             user_ids.append(request.args.get('user', type=int))
         else:
-            user_ids = list(range(101, 302))
+            user_ids = list(all_user_ids)
 
         model_id: int = -1
         if 'model' in request.args:
             model_id = request.args.get('model', type=int)
-
-        models: dict = {
-            0: get_model(0),
-            1: get_model(1)
-        }
 
         for m_id in range(0, 2):
             models[model_id] = get_model(m_id)
