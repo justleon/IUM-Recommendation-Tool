@@ -27,4 +27,3 @@ if __name__ == "__main__":
     print("\n---CONTENT BASED MODEL---")
     print(cb_result)
     print({"best_params": best_params})
-

@@ -17,7 +17,7 @@ class Recommendations(Resource):
             if u is None:
                 code = 400
                 errors.append('User parameter has to be an integer')
-            elif u < 102 or u > 301:
+            elif u < 101 or u > 301:
                 if code == 200:
                     code = 404
                 errors.append('This user does not exist')
@@ -51,7 +51,7 @@ class Recommendations(Resource):
         if 'user' in request.args:
             user_ids.append(request.args.get('user', type=int))
         else:
-            user_ids = list(range(102, 302))
+            user_ids = list(range(101, 302))
 
         model_id: int = -1
         if 'model' in request.args:
